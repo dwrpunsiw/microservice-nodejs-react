@@ -1,0 +1,10 @@
+# example of creating a pod kubernetes
+
+# apiVersion: v1
+# kind: Pod
+# metadata:
+#   name: posts
+# spec:
+#   containers:
+#     - name: posts
+#       image: wisnuprsj/posts:0.0.1
