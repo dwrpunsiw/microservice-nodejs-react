@@ -32,3 +32,5 @@ npm-debug.log.*
 dist
 dist/
 /dist
+
+secret.txt
