@@ -9,21 +9,17 @@ import { BadRequestError } from "../errors/bad-request-error";
 import { User } from "../models/user";
 
 import { validateRequest } from "../middlewares/validate-request";
+import { currentUser } from "../middlewares/current-user";
 import { Password } from "../services/password";
 
 const router = express.Router();
 
 router.get(
   "/api/users/currentuser",
-  [
-    body("email").isEmail().withMessage("Email must be valid"),
-    body("password")
-      .trim()
-      .notEmpty()
-      .withMessage("Password must be between 4 and 20 characters"),
-  ],
-  validateRequest,
-  async (req: Request, res: Response) => {}
+  currentUser,
+  async (req: Request, res: Response) => {
+    res.send({ currentUser: req.currentUser || null });
+  }
 );
 
 router.post(
@@ -90,7 +86,10 @@ router.post(
       throw new BadRequestError("Invalid credentials");
     }
 
-    const matchPassword = Password.compare(existingUser.password, password);
+    const matchPassword = await Password.compare(
+      existingUser.password,
+      password
+    );
 
     if (!matchPassword) {
       throw new BadRequestError("Invalid credentials");
@@ -115,7 +114,9 @@ router.post(
 );
 
 router.post("/api/users/signout", (req, res) => {
-  res.send("hi there!");
+  req.session = null;
+
+  res.send({});
 });
 
 export default router;
