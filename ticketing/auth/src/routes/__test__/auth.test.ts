@@ -120,3 +120,25 @@ it("sign in with valid credentials returns a cookie", async () => {
 
   expect(res.get("Set-Cookie")).toBeDefined();
 });
+
+it("response with details about the current user", async () => {
+  const cookie = await signin();
+
+  const response = await request(app)
+    .get("/api/users/currentuser")
+    .set("Cookie", cookie)
+    .send()
+    .expect(200);
+
+  // console.log(response.body);
+  expect(response.body.currentUser.email).toEqual("wisnuprsj@gmail.com");
+});
+
+it("response with null if not authenticated", async () => {
+  const response = await request(app)
+    .get("/api/users/currentuser")
+    .send()
+    .expect(200);
+
+  expect(response.body.currentUser).toEqual(null);
+});
